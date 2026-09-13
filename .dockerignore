@@ -1,0 +1,17 @@
+.idea
+.vscode
+
+.env
+venv
+.venv
+__pycache__
+
+.git
+.github
+
+LICENSE
+README.md
+Dockerfile
+.gitignore
+.dockerignore
+docker-compose.yml
