@@ -15,14 +15,9 @@ class AbstractSimplifier:
         self.step = step
         self.prompt_name = prompt_name
 
-        self.sempl_it = ChatOpenAI(base_url=os.getenv("SEMPL_IT_ENDPOINT", "http://localhost:40010/v1"),
-                                   api_key=SecretStr(os.getenv("SEMPL_IT_API_KEY", "")),
-                                   model=self.step,
-                                   max_tokens=4095,
-                                   temperature=0.1,
-                                   top_p=0.2,
-                                   frequency_penalty=0.0,
-                                   presence_penalty=0.0)
+        self.sempl_it = ChatOpenAI(model="gpt-5-mini",
+                                   api_key=SecretStr(os.getenv("OPENAI_API_KEY", "")),
+                                   max_tokens=4095)
 
     def simplify(self, _progress: SimplificationProgress):
         print(f"Running {self.step} simplification")
@@ -36,7 +31,7 @@ class AbstractSimplifier:
         return _progress
 
     def prompt(self, text: str) -> List[BaseMessage]:
-        system_prompt = f"/no_think\n{loader.load_prompt(self.prompt_name)}"
+        system_prompt = loader.load_prompt(self.prompt_name)
 
         return [
             SystemMessage(system_prompt),
