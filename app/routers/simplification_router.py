@@ -24,7 +24,7 @@ async def simplify(request: SimplificationRequest,
                    monitoring_service: Annotated[MonitoringService, Depends(get_monitoring_service)],
                    simplification_service: Annotated[SimplificationService, Depends(get_simplification_service)]):
     try:
-        logger.info(request)
+        logger.info("Simplification request received (consent: %s)", request.consent)
 
         # Simplify the text
         # simplified_text, simplification_progress = simplification_service.simplify(text=request.text, target=request.target)
