@@ -1,5 +1,6 @@
 import os
 import re
+import time
 from typing import List
 
 from langchain_core.messages import SystemMessage, BaseMessage, HumanMessage
@@ -17,7 +18,8 @@ class AbstractSimplifier:
 
         self.sempl_it = ChatOpenAI(model="gpt-5-mini",
                                    api_key=SecretStr(os.getenv("OPENAI_API_KEY", "")),
-                                   max_tokens=4095)
+                                   max_tokens=4095,
+                                   reasoning_effort="minimal")
 
     def simplify(self, _progress: SimplificationProgress):
         print(f"Running {self.step} simplification")
@@ -25,7 +27,24 @@ class AbstractSimplifier:
         text_to_simplify = _progress[self.prev_step]
         prompt = self.prompt(text_to_simplify)
 
-        text_simplified = self.sempl_it.invoke(prompt).content
+        start = time.monotonic()
+        response = self.sempl_it.invoke(prompt)
+        elapsed = time.monotonic() - start
+
+        text_simplified = response.content
+
+        # Extract token usage from response metadata
+        usage = getattr(response, "usage_metadata", None) or {}
+        input_tokens = usage.get("input_tokens")
+        output_tokens = usage.get("output_tokens")
+        total_tokens = usage.get("total_tokens")
+        reasoning_tokens = usage.get("reasoning_tokens")
+
+        print(
+            f"[LLM] step={self.step} duration={elapsed:.2f}s "
+            f"input_tokens={input_tokens} output_tokens={output_tokens} "
+            f"total_tokens={total_tokens} reasoning_tokens={reasoning_tokens}"
+        )
 
         _progress.update({self.step: self.postprocess_output(text_simplified)})
         return _progress
