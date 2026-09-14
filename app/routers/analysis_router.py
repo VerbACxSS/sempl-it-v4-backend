@@ -21,7 +21,7 @@ async def analyze_text(request: TextAnalysisRequest,
                        analysis_service: Annotated[AnalysisService, Depends(get_analysis_service)],
                        monitoring_service: Annotated[MonitoringService, Depends(get_monitoring_service)]):
     try:
-        logger.info(request)
+        logger.info("Text analysis request received (consent: %s)", request.consent)
 
         # Analyze the text
         # text_evaluation = analysis_service.do_text_analysis(text=request.text)
@@ -47,7 +47,7 @@ async def compare_texts(request: ComparisonAnalysisRequest,
                         analysis_service: Annotated[AnalysisService, Depends(get_analysis_service)],
                         monitoring_service: Annotated[MonitoringService, Depends(get_monitoring_service)]):
     try:
-        logger.info(request)
+        logger.info("Comparison analysis request received (consent: %s)", request.consent)
 
         # Compare the texts
         # comparison = analysis_service.do_text_comparison(text1=request.text1, text2=request.text2)
