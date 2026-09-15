@@ -22,14 +22,14 @@ class AbstractSimplifier:
                                    reasoning_effort="minimal")
 
     def simplify(self, _progress: SimplificationProgress):
-        print(f"Running {self.step} simplification")
-
         text_to_simplify = _progress[self.prev_step]
         prompt = self.prompt(text_to_simplify)
 
         start = time.monotonic()
         response = self.sempl_it.invoke(prompt)
         elapsed = time.monotonic() - start
+
+        _progress.current_step += 1
 
         text_simplified = response.content
 
@@ -41,7 +41,8 @@ class AbstractSimplifier:
         reasoning_tokens = usage.get("reasoning_tokens")
 
         print(
-            f"[LLM] step={self.step} duration={elapsed:.2f}s "
+            f"[LLM] request_id={_progress.request_id} step={_progress.current_step}/{_progress.total_steps} "
+            f"name={self.step} duration={elapsed:.2f}s "
             f"input_tokens={input_tokens} output_tokens={output_tokens} "
             f"total_tokens={total_tokens} reasoning_tokens={reasoning_tokens}"
         )
