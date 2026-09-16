@@ -1,7 +1,8 @@
 import logging
+import time
 from typing import Annotated
 
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request as FastAPIRequest
 from fastapi.concurrency import run_in_threadpool
 
 from app.models.SimplificationRequest import SimplificationRequest
@@ -19,6 +20,7 @@ router = APIRouter()
 
 @router.post("/", response_model=SimplificationResponse)
 async def simplify(request: SimplificationRequest,
+                   http_request: FastAPIRequest,
                    background_tasks: BackgroundTasks,
                    analysis_service: Annotated[AnalysisService, Depends(get_analysis_service)],
                    monitoring_service: Annotated[MonitoringService, Depends(get_monitoring_service)],
@@ -27,12 +29,28 @@ async def simplify(request: SimplificationRequest,
         logger.info("Simplification request received (consent: %s)", request.consent)
 
         # Simplify the text
-        # simplified_text, simplification_progress = simplification_service.simplify(text=request.text, target=request.target)
         simplified_text, simplification_progress = await run_in_threadpool(simplification_service.simplify, text=request.text, target=request.target)
+        request_id = simplification_progress["request_id"]
 
         # Compare the texts
-        # comparison = analysis_service.do_text_comparison(text1=request.text, text2=simplified_text)
-        comparison = await run_in_threadpool(analysis_service.do_text_comparison, text1=request.text, text2=simplified_text)
+        analysis_semaphore = http_request.app.state.analysis_semaphore
+        waiting_started = time.monotonic()
+        print(f"[LOCAL_ANALYSIS] request_id={request_id} waiting")
+        await analysis_semaphore.acquire()
+        try:
+            print(
+                f"[LOCAL_ANALYSIS] request_id={request_id} admitted "
+                f"wait_duration={time.monotonic() - waiting_started:.2f}s"
+            )
+            comparison = await run_in_threadpool(
+                analysis_service.do_text_comparison,
+                text1=request.text,
+                text2=simplified_text,
+                request_id=request_id
+            )
+        finally:
+            analysis_semaphore.release()
+            print(f"[LOCAL_ANALYSIS] request_id={request_id} released")
 
         # Save the comparison result if consent is given
         if request.consent:
