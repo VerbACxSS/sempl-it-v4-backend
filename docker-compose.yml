@@ -11,5 +11,7 @@ services:
       - 'OPENAI_API_KEY=${OPENAI_API_KEY}'
       - 'MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://localhost:30050/api/v1}'
       - 'MONITORING_API_KEY=${MONITORING_API_KEY:-123456789}'
+      - 'ANALYSIS_CONCURRENCY_LIMIT=${ANALYSIS_CONCURRENCY_LIMIT:-2}'
+      - 'THREAD_POOL_CONCURRENCY=${THREAD_POOL_CONCURRENCY:-100}'
     healthcheck:
       test: [ 'CMD', 'curl', '--fail', 'http://localhost:30010/api/v1/healthcheck' ]
