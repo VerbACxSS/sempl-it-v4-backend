@@ -1,3 +1,5 @@
+import time
+import uuid
 from typing import Tuple
 
 from langgraph.constants import START, END
@@ -9,6 +11,7 @@ from app.utils.simplifier import Proofreader, LexNormalizer, ConnectivesSimplifi
 
 
 class SimplificationService:
+
     def __init__(self):
         self.proofreader = Proofreader()
         self.lex_normalizer = LexNormalizer()
@@ -50,12 +53,26 @@ class SimplificationService:
         self.chain = workflow.compile()
 
     def simplify(self, text: str, target: str) -> Tuple[str, SimplificationProgress]:
-        progress = SimplificationProgress()
-        progress.target = target
-        progress.original = text
+        request_id = uuid.uuid4().hex[:8]
+        total_steps = 9 if target == "common" else 8
 
+        progress = SimplificationProgress(request_id=request_id, target=target, original=text, total_steps=total_steps)
 
-        progress = self.chain.invoke(progress)
+        print(f"[SIMPLIFY] request_id={request_id} started target={target} total_steps={total_steps}")
+        start = time.monotonic()
+
+        try:
+            progress = self.chain.invoke(progress)
+        except Exception as exc:
+            elapsed = time.monotonic() - start
+            completed = progress.current_step
+            print(f"[SIMPLIFY] request_id={request_id} failed completed_steps={completed}/{total_steps} duration={elapsed:.2f}s error_type={type(exc).__name__}")
+            raise
+
+        elapsed = time.monotonic() - start
+        completed_steps = progress.get("current_step", 0) if isinstance(progress, dict) else progress.current_step
+        print(f"[SIMPLIFY] request_id={request_id} completed steps={completed_steps}/{total_steps} duration={elapsed:.2f}s")
+
         if target == "common":
             return progress["explain"], progress
         return progress["sentence_reorganizer"], progress

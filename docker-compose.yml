@@ -8,8 +8,7 @@ services:
       - '30010:30010'
     environment:
       - 'PYTHONUNBUFFERED=1'
-      - 'SEMPL_IT_ENDPOINT=${SEMPL_IT_ENDPOINT:-http://localhost:40010/v1}'
-      - 'SEMPL_IT_API_KEY=${SEMPL_IT_API_KEY:-123456789}'
+      - 'OPENAI_API_KEY=${OPENAI_API_KEY}'
       - 'MONITORING_ENDPOINT=${MONITORING_ENDPOINT:-http://localhost:30050/api/v1}'
       - 'MONITORING_API_KEY=${MONITORING_API_KEY:-123456789}'
     healthcheck:

@@ -17,6 +17,10 @@ class SimplificationProgress(BaseModel):
     sentence_reorganizer: str = Field(default='', serialization_alias="sentence_reorganizer")
     explain: str = Field(default='', serialization_alias="explain")
 
+    request_id: str = Field(default='')
+    current_step: int = Field(default=0)
+    total_steps: int = Field(default=0)
+
     def __getitem__(self, item):
         return getattr(self, item)
 
@@ -25,9 +29,23 @@ class SimplificationProgress(BaseModel):
             setattr(self, key, value)
 
 
+class SimplificationStepsResponse(BaseModel):
+    target: str = Field(default='expert', serialization_alias="target")
+    original: str = Field(default='', serialization_alias="original")
+    proofreading: str = Field(default='', serialization_alias="proofreading")
+    lex: str = Field(default='', serialization_alias="lex")
+    connectives: str = Field(default='', serialization_alias="connectives")
+    expressions: str = Field(default='', serialization_alias="expressions")
+    sentence_splitter: str = Field(default='', serialization_alias="sentence_splitter")
+    nominalizations: str = Field(default='', serialization_alias="nominalizations")
+    verbs: str = Field(default='', serialization_alias="verbs")
+    sentence_reorganizer: str = Field(default='', serialization_alias="sentence_reorganizer")
+    explain: str = Field(default='', serialization_alias="explain")
+
+
 class SimplificationResponse(BaseModel):
     simplified_text: str = Field(serialization_alias="simplifiedText")
-    simplification_steps: SimplificationProgress = Field(serialization_alias="simplificationSteps")
+    simplification_steps: SimplificationStepsResponse = Field(serialization_alias="simplificationSteps")
     metrics1: TextEvaluation = Field(serialization_alias="metrics1")
     metrics2: TextEvaluation = Field(serialization_alias="metrics2")
     similarity: SimilarityEvaluation = Field(serialization_alias="similarity")

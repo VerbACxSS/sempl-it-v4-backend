@@ -41,7 +41,7 @@ async def simplify(request: SimplificationRequest,
         # Return the simplification
         return SimplificationResponse(
             simplified_text=simplified_text,
-            simplification_steps=simplification_progress,
+            simplification_steps={key: value for key, value in simplification_progress.items() if key not in {"request_id", "current_step", "total_steps"}},
             metrics1=comparison.reference_text_evaluation,
             metrics2=comparison.simplified_text_evaluation,
             similarity=comparison.similarity_evaluation,
