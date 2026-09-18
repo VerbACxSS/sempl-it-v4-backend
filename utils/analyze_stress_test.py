@@ -86,7 +86,7 @@ async def main(number_of_requests: int):
         max_keepalive_connections=number_of_requests,
     )
 
-    timeout = httpx.Timeout(600.0)
+    timeout = httpx.Timeout(1200.0)
 
     start_event = asyncio.Event()
 
