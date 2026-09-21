@@ -11,10 +11,6 @@ SIMPLIFY_URL = "http://localhost:30010/api/v1/simplify/"
 ANALYZE_URL = "http://localhost:30010/api/v1/analyze/text"
 COMPARE_URL = "http://localhost:30010/api/v1/analyze/comparison"
 
-SIMPLIFY_URL = "http://localhost:30010/api/v1/simplify/"
-ANALYZE_URL = "http://localhost:30010/api/v1/analyze/text"
-COMPARE_URL = "http://localhost:30010/api/v1/analyze/comparison"
-
 FUNCTIONS = ("SIMPLIFY", "ANALYZE", "COMPARE")
 
 DEFAULT_CSV = "sempl_it_test_texts.csv"
