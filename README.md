@@ -2,7 +2,7 @@
 
 This is the backend of SEMPL-IT, a web application designed to simplify and analyze Italian administrative documents.
 
-The simplification pipeline uses GPT-6 Luna with medium reasoning effort through the OpenAI API and is orchestrated using LangChain and LangGraph.
+The simplification pipeline uses GPT-6.1 Terra with medium reasoning effort through the OpenAI API and is orchestrated using LangChain and LangGraph.
 
 ## WebApp
 
@@ -39,7 +39,7 @@ MONITORING_ENDPOINT=...
 MONITORING_API_KEY=...
 ```
 
-`OPENAI_API_KEY` is used to access GPT-6 Luna through the OpenAI API.
+`OPENAI_API_KEY` is used to access GPT-6.1 Terra through the OpenAI API.
 
 ### Using `python` and `pip`
 

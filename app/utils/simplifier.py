@@ -16,7 +16,7 @@ class AbstractSimplifier:
         self.step = step
         self.prompt_name = prompt_name
 
-        self.sempl_it = ChatOpenAI(model="gpt-6-luna",
+        self.sempl_it = ChatOpenAI(model="gpt-6.1-terra",
                                    api_key=SecretStr(os.getenv("OPENAI_API_KEY", "")),
                                    max_tokens=4095,
                                    reasoning_effort="medium")
