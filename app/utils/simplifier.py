@@ -16,10 +16,10 @@ class AbstractSimplifier:
         self.step = step
         self.prompt_name = prompt_name
 
-        self.sempl_it = ChatOpenAI(model="gpt-5-mini",
+        self.sempl_it = ChatOpenAI(model="gpt-6-luna",
                                    api_key=SecretStr(os.getenv("OPENAI_API_KEY", "")),
                                    max_tokens=4095,
-                                   reasoning_effort="minimal")
+                                   reasoning_effort="medium")
 
     def simplify(self, _progress: SimplificationProgress):
         text_to_simplify = _progress[self.prev_step]
